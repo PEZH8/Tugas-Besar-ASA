@@ -1,0 +1,76 @@
+import heapq
+
+graph = {
+    'A': [('B', 1)],
+    'B': [('C', 1), ('J', 1)],
+    'C': [('D', 2)],
+    'D': [('E', 3)],
+    'E': [('F', 2)],
+    'F': [('G', 4), ('K', 1)],
+    'G': [('H', 1), ('L', 1)],
+    'H': [],
+    'J': [('B', 2)],
+    'K': [('C', 3)],
+    'L': [('F', 2)]
+}
+
+node_description = {
+    'A': 'Isi Google Form',
+    'B': 'Generate Surat',
+    'C': 'Tanda Tangan Mahasiswa',
+    'D': 'Dosen Pembimbing',
+    'E': 'Koordinator PKL',
+    'F': 'Ketua Departemen',
+    'G': 'Dekanat',
+    'H': 'Surat Izin Keluar',
+    'J': 'Revisi Generate Surat',
+    'K': 'Revisi Departemen',
+    'L': 'Revisi Dekanat'
+}
+
+best_path = []
+best_cost = float('inf')
+visited_nodes = 0
+
+
+def dijkstra(start, goal):
+    global best_path, best_cost, visited_nodes
+
+    # (cost, node, path)
+    queue = [(0, start, [start])]
+    visited = set()
+
+    while queue:
+        cost, node, path = heapq.heappop(queue)
+        visited_nodes += 1
+
+        if node in visited:
+            continue
+        visited.add(node)
+
+        if node == goal:
+            best_cost = cost
+            best_path = path
+            return
+
+        for neighbor, weight in graph[node]:
+            if neighbor not in visited:
+                heapq.heappush(queue, (cost + weight, neighbor, path + [neighbor]))
+
+
+start_node = 'A'
+goal_node = 'H'
+
+dijkstra(start_node, goal_node)
+
+print("\n===== DIJKSTRA RESULT =====\n")
+
+print("Path :")
+print(" -> ".join(best_path))
+
+print("\nDetail Path :")
+for node in best_path:
+    print(f"  {node} = {node_description[node]}")
+
+print("\nTotal Cost :", best_cost)
+print("Visited Nodes :", visited_nodes)
